@@ -1,21 +1,24 @@
-users = [
-    {"name": "Nikos", "active": True},
-    {"name": "Maria", "active": False},
-    {"name": "Giorgos", "active": True},
-    {"name": "Nikos", "active": True},
-]
-def logger(func):
-    def wrapper(users):
-        print("start")
-        yield from func(users)
-        print("end")
-    return wrapper
+from contextlib import contextmanager
 
-@logger
-def active_users(users):
-    for user in users:
-        if user["active"]:
-            yield user
+@contextmanager
+def database(name):
+    db = Database(name)
+    try:    
+        db.connected = True
+        yield db
+    finally:
+        db.connected = False
+        print(f"Disconnected from database: {db.name}")
 
-for user in active_users(users):
-    print(user)
+class Database:
+    def __init__(self, name):
+        self.name = name
+        self.connected = False
+        
+    def query(self, sql):
+        # προσομοίωση query
+        pass
+
+with database("users_db") as db:
+    db.query("...")
+    raise Exception("Database error")
