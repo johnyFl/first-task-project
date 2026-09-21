@@ -1,24 +1,45 @@
-from contextlib import contextmanager
+import time
 
-@contextmanager
-def database(name):
-    db = Database(name)
-    try:    
-        db.connected = True
-        yield db
-    finally:
-        db.connected = False
-        print(f"Disconnected from database: {db.name}")
 
-class Database:
-    def __init__(self, name):
-        self.name = name
-        self.connected = False
-        
-    def query(self, sql):
-        # προσομοίωση query
-        pass
+def timer(func):
+    def wrapper(*args, **kwargs):
+        start = time.time()
 
-with database("users_db") as db:
-    db.query("...")
-    raise Exception("Database error")
+        result = func(*args, **kwargs)
+
+        end = time.time()
+
+        print(f"{func.__name__} took {end - start:.4f} seconds")
+
+        return result
+
+    return wrapper
+
+
+@timer
+def add(a, b):
+    time.sleep(1)
+    return a + b
+
+
+@timer
+def multiply(a, b):
+    time.sleep(2)
+    return a * b
+
+
+@timer
+def divide(a, b):
+    time.sleep(0.5)
+    return a / b
+
+
+result1 = add(10, 20)
+print("Result:", result1)
+
+result2 = multiply(10, 20)
+print("Result:", result2)
+
+result3 = divide(20, 5)
+print("Result:", result3)
+
